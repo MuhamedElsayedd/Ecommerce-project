@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,15 +17,22 @@ class ProductController extends Controller
     public function index()
     {
         try {
+            $products = Product::paginate(10);
 
-            $products = Product::latest()->paginate(10);
             return successResponse(
-                data: ['products' => $products],
+                data: [
+                    'products' => ProductResource::collection($products),
+                    'pagination' => [
+                        'current_page' => $products->currentPage(),
+                        'last_page' => $products->lastPage(),
+                        'per_page' => $products->perPage(),
+                        'total' => $products->total(),
+                    ]
+                ],
                 message: 'Products retrieved successfully',
                 statusCode: Response::HTTP_OK
             );
         } catch (\Exception $e) {
-
             return errorResponse(
                 message: 'An error occurred while fetching products.',
                 errors: [$e->getMessage()],
@@ -42,7 +50,7 @@ class ProductController extends Controller
             $product = Product::create($request->validated());
 
             return successResponse(
-                data: ['product' => $product],
+                data: ['product' => ProductResource::collection($product)],
                 message: 'Product created successfully',
                 statusCode: Response::HTTP_OK
             );
@@ -60,23 +68,30 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        //
         try {
             $product = Product::find($id);
 
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Product retirved successfully.',
-                'data'    => $product
-            ], Response::HTTP_CREATED);
+            if (!$product) {
+                return errorResponse(
+                    message: 'Product not found.',
+                    statusCode: Response::HTTP_NOT_FOUND
+                );
+            }
+
+            return successResponse(
+                data: ['product' => new ProductResource($product)],
+                message: 'Product retrieved successfully',
+                statusCode: Response::HTTP_OK
+            );
         } catch (\Exception $e) {
             return errorResponse(
-                message: 'An error occur while fetching the product.',
+                message: 'An error occurred while fetching the product.',
                 errors: [$e->getMessage()],
                 statusCode: Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
     }
+
 
 
     /**
@@ -97,11 +112,11 @@ class ProductController extends Controller
 
             $product = Product::update($request->validated());
 
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Product updated successfully.',
-                'data'    => $product
-            ], Response::HTTP_OK);
+            return successResponse(
+                data: ['product' => ProductResource::collection($product)],
+                message: 'Product updated successfully',
+                statusCode: Response::HTTP_OK
+            );
         } catch (\Exception $e) {
             return errorResponse(
                 message: 'An error occurred while updating the product.',
@@ -128,11 +143,10 @@ class ProductController extends Controller
 
             $product->delete();
 
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Product deleted successfully.',
-                'data'    => null
-            ], Response::HTTP_OK);
+            return successResponse(
+                message: 'Product deleted successfully',
+                statusCode: Response::HTTP_OK
+            );
         } catch (\Exception $e) {
             return errorResponse(
                 message: 'An error occurred while deleting the product.',

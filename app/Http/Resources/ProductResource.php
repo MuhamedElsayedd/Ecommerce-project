@@ -18,10 +18,7 @@ class ProductResource extends JsonResource
             'category'    => $this->whenLoaded('category', function () {
                 return $this->category->name;
             }),
-            'image' => $this->image  ? [
-                'url'  => asset('storage/' . $this->image),
-                'path' => $this->image,
-            ] : null,
+            'image'       => $this->image ? asset('storage/' . $this->image) : null,
             'created_at'  => $this->created_at,
             'updated_at'  => $this->updated_at,
         ];

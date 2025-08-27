@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserRegisterController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,8 +21,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Authentication Routes
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', UserRegisterController::class);
+Route::post('/login',  [UserAuthController::class, 'login']);
+Route::post('/logout', [UserAuthController::class, 'logout'])->middleware('auth:sanctum');
 
 
 // Products
