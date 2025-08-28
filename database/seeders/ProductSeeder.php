@@ -15,7 +15,7 @@ class ProductSeeder extends Seeder
     {
         Storage::makeDirectory('public/products');
         $products = [
-            // Electronics
+
             [
                 'name' => 'iPhone 14',
                 'price' => 1200,
@@ -87,7 +87,7 @@ class ProductSeeder extends Seeder
                 'image' => 'products/samsung-tv.jpg',
             ],
 
-            // Fashion
+
             [
                 'name' => 'Nike Air Max',
                 'price' => 150,
@@ -159,7 +159,7 @@ class ProductSeeder extends Seeder
                 'image' => 'products/hm-tshirt.jpg',
             ],
 
-            // Books
+
             [
                 'name' => 'Atomic Habits',
                 'price' => 20,
@@ -231,7 +231,7 @@ class ProductSeeder extends Seeder
                 'image' => 'products/alchemist.jpg',
             ],
 
-            // Home & Kitchen
+
             [
                 'name' => 'Cooking Pan Set',
                 'price' => 80,
